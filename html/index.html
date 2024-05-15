@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Поиск элемента</title>
+    <style>
+      #searchContainer {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 20px;
+      }
+    </style>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
+  </head>
+  <body>
+    <br /><br /><br />
+    <div id="searchContainer">
+      <input
+        type="text"
+        id="searchInput"
+        placeholder="Введите символ элемента"
+      />
+      <button type="submit" id="searchButton">Поиск</button>
+    </div>
+    <div class="container mt-5">
+      <div class="row justify-content-center">
+        <div class="col-md-6">
+          <div id="result"></div>
+        </div>
+      </div>
+    </div>
+    <script>
+      function displayData(data) {
+        const resultDiv = document.getElementById("result");
+        resultDiv.innerHTML = "";
+
+        for (const key in data) {
+          const fieldDiv = document.createElement("div");
+          fieldDiv.className = "field";
+
+          const label = document.createElement("span");
+          label.className = "label";
+          label.textContent = key + ": ";
+
+          const value = document.createElement("span");
+          value.textContent = data[key];
+
+          fieldDiv.appendChild(label);
+          fieldDiv.appendChild(value);
+
+          resultDiv.appendChild(fieldDiv);
+        }
+      }
+
+      document
+        .getElementById("searchButton")
+        .addEventListener("click", async function () {
+          const input = document.getElementById("searchInput").value.trim();
+          if (input.length === 0) {
+            alert("Введите символ элемента");
+            return;
+          }
+
+          try {
+            const response = await fetch(
+              `http://127.0.0.1:5000/element?symbol=${input}`
+            );
+            if (!response.ok) {
+              throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const data = await response.json();
+            displayData(data);
+          } catch (error) {
+            console.error("Ошибка:", error);
+            alert("Произошла ошибка при выполнении запроса");
+          }
+        });
+    </script>
+  </body>
+</html>
